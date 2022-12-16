@@ -1,5 +1,7 @@
 "use strict";
 var dbConn = require("./../../config/db.config");
+
+
 //User object create
 var User = function (user) {
   this.username = user.username;
@@ -44,6 +46,34 @@ User.findAll = function (result) {
     }
   });
 };
+
+User.findAllLimit = function (limit, result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("Select * from users LIMIT " + limit, function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+User.findAllLimitOffset = function (limit, offset, result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("Select * from users LIMIT " + limit + ", " + offset, function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+
 
 User.update = function (id, user, result) {
   dbConn.query(

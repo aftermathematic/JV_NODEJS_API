@@ -3,10 +3,24 @@ const User = require("../models/user.model");
 
 exports.findAll = function (req, res) {
   User.findAll(function (err, user) {
-    console.log("controller");
+    //console.log("controller");
     if (err) res.send(err);
     console.log("res", user);
     res.send(user);
+  });
+};
+
+exports.findAllLimit = function (req, res) {
+  User.findAllLimit(req.params.limit, function (err, user) {
+    if (err) res.send(err);
+    res.json(user);
+  });
+};
+
+exports.findAllLimitOffset = function (req, res) {
+  User.findAllLimit([req.params.limit, req.params.offset], function (err, user) {
+    if (err) res.send(err);
+    res.json(user);
   });
 };
 
@@ -20,10 +34,6 @@ exports.create = function (req, res) {
   } else {
     User.create(new_user, function (err, user) {
       if (err) {
-        // res.send({
-        //   error: true,
-        //   message: "xxxxxxxxxxPlease provide all required fields",
-        // });
         res.json({
           error: true,
           message: "Adding user failed!",

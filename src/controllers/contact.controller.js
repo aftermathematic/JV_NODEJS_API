@@ -1,6 +1,10 @@
 "use strict";
 
 const Contact = require("../models/contact.model");
+var validation = require("../../config/validation.js");
+
+var isEmail = validation.isEmail("jan");
+console.log("Email: " + isEmail);
 
 exports.findAll = function (req, res) {
   Contact.findAll(function (err, contact) {
@@ -19,24 +23,46 @@ exports.create = function (req, res) {
       .status(400)
       .send({ error: true, message: "Please provide all required fields" });
   } else {
-    Contact.create(new_contact, function (err, contact) {
-      if (err) {
-        // res.send({
-        //   error: true,
-        //   message: "xxxxxxxxxxPlease provide all required fields",
-        // });
-        res.json({
-          error: true,
-          message: "Adding contact failed!",
-        });
-      } else {
-        res.json({
-          error: false,
-          message: "Contact added successfully!",
-          data: contact,
-        });
-      }
-    });
+    // Validation
+    var isValid = true;
+    var ErrorMsg = [];
+
+    var isAlphaNumeric = validation.isAlphaNumeric(req.body.name);
+    if (!isAlphaNumeric) {
+      ErrorMsg.push("Name is not valid");
+      isValid = false;
+    }
+
+    var isEmail = validation.isEmail(req.body.email);
+    if (!isEmail) {
+      ErrorMsg.push("Email address is not valid");
+      isValid = false;
+    }
+
+    var msg = req.body.message;
+    if (msg.length === 0) {
+      ErrorMsg.push("Message is not valid,");
+      isValid = false;
+    }
+
+    if (isValid == true) {
+      Contact.create(new_contact, function (err, contact) {
+        if (err) {
+          res.json({
+            error: true,
+            message: "Adding contact failed!",
+          });
+        } else {
+          res.json({
+            error: false,
+            message: "Contact added successfully!",
+            data: contact,
+          });
+        }
+      });
+    } else {
+      res.status(400).send({ error: true, message: ErrorMsg.join(", ") });
+    }
   }
 };
 
@@ -53,10 +79,40 @@ exports.update = function (req, res) {
       .status(400)
       .send({ error: true, message: "Please provide all required fields" });
   } else {
-    Contact.update(req.params.id, new Contact(req.body), function (err, contact) {
-      if (err) res.send(err);
-      res.json({ error: false, message: "Contact successfully updated" });
-    });
+    // Validation
+    var isValid = true;
+    var ErrorMsg = [];
+
+    var isAlphaNumeric = validation.isAlphaNumeric(req.body.name);
+    if (!isAlphaNumeric) {
+      ErrorMsg.push("Name is not valid");
+      isValid = false;
+    }
+
+    var isEmail = validation.isEmail(req.body.email);
+    if (!isEmail) {
+      ErrorMsg.push("Email address is not valid");
+      isValid = false;
+    }
+
+    var msg = req.body.message;
+    if (msg.length === 0) {
+      ErrorMsg.push("Message is not valid,");
+      isValid = false;
+    }
+
+    if (isValid == true) {
+      Contact.update(
+        req.params.id,
+        new Contact(req.body),
+        function (err, contact) {
+          if (err) res.send(err);
+          res.json({ error: false, message: "Contact successfully updated" });
+        }
+      );
+    } else {
+      res.status(400).send({ error: true, message: ErrorMsg.join(", ") });
+    }
   }
 };
 
