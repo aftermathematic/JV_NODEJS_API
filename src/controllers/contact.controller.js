@@ -3,16 +3,48 @@
 const Contact = require("../models/contact.model");
 var validation = require("../../config/validation.js");
 
-var isEmail = validation.isEmail("jan");
-console.log("Email: " + isEmail);
-
 exports.findAll = function (req, res) {
   Contact.findAll(function (err, contact) {
-    console.log("controller");
+    //console.log("controller");
     if (err) res.send(err);
     console.log("res", contact);
     res.send(contact);
   });
+};
+
+exports.findAllSorted = function (req, res) {
+  Contact.findAllSorted(req.params.orderby, function (err, contact) {
+    if (err) res.send(err);
+    console.log("res", contact);
+    res.send(contact);
+  });
+};
+
+exports.findAllLimit = function (req, res) {
+  Contact.findAllLimit(req.params.limit, function (err, contact) {
+    if (err) res.send(err);
+    res.json(contact);
+  });
+};
+
+exports.findAllLimitOffset = function (req, res) {
+  Contact.findAllLimit(
+    [req.params.limit, req.params.offset],
+    function (err, contact) {
+      if (err) res.send(err);
+      res.json(contact);
+    }
+  );
+};
+
+exports.findAllSearch = function (req, res) {
+  Contact.findAllSearch(
+    [req.params.field, req.params.search],
+    function (err, contact) {
+      if (err) res.send(err);
+      res.json(contact);
+    }
+  );
 };
 
 exports.create = function (req, res) {
