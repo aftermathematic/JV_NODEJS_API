@@ -47,6 +47,32 @@ User.findAll = function (result) {
   });
 };
 
+User.findAllSorted = function (orderby, result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("SELECT * FROM users ORDER BY " + orderby, function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+User.findAllSearch = function ([field, search], result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("SELECT * FROM users where " + field + " LIKE '%" + search + "%'", function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
 User.findAllLimit = function (limit, result) {
   // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
   //single quotes are automatically added, which breaks the query.

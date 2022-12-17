@@ -10,6 +10,14 @@ exports.findAll = function (req, res) {
   });
 };
 
+exports.findAllSorted = function (req, res) {
+  User.findAllSorted(req.params.orderby, function (err, user) {
+    if (err) res.send(err);
+    console.log("res", user);
+    res.send(user);
+  });
+};
+
 exports.findAllLimit = function (req, res) {
   User.findAllLimit(req.params.limit, function (err, user) {
     if (err) res.send(err);
@@ -19,6 +27,13 @@ exports.findAllLimit = function (req, res) {
 
 exports.findAllLimitOffset = function (req, res) {
   User.findAllLimit([req.params.limit, req.params.offset], function (err, user) {
+    if (err) res.send(err);
+    res.json(user);
+  });
+};
+
+exports.findAllSearch = function (req, res) {
+  User.findAllSearch([req.params.field, req.params.search], function (err, user) {
     if (err) res.send(err);
     res.json(user);
   });
