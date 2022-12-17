@@ -1,5 +1,6 @@
 "use strict";
 var dbConn = require("./../../config/db.config");
+
 //Contact object create
 var Contact = function (contact) {
   this.name = contact.name;
@@ -40,6 +41,58 @@ Contact.findAll = function (result) {
       result(null, err);
     } else {
       console.log("contacts : ", res);
+      result(null, res);
+    }
+  });
+};
+
+Contact.findAllSorted = function (orderby, result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("SELECT * FROM contacts ORDER BY " + orderby, function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+Contact.findAllSearch = function ([field, search], result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("SELECT * FROM contacts where " + field + " LIKE '%" + search + "%'", function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+Contact.findAllLimit = function (limit, result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("Select * from contacts LIMIT " + limit, function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+Contact.findAllLimitOffset = function (limit, offset, result) {
+  // Apparently SQL returns an error when a limit is inserted via a '?' parameter.   
+  //single quotes are automatically added, which breaks the query.
+  dbConn.query("Select * from contacts LIMIT " + limit + ", " + offset, function (err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
       result(null, res);
     }
   });

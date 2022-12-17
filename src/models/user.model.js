@@ -1,11 +1,11 @@
 "use strict";
 var dbConn = require("./../../config/db.config");
 
-
 //User object create
 var User = function (user) {
   this.username = user.username;
   this.email = user.email;
+  this.birthday = user.birthday;
 
   this.created_at = new Date();
   this.updated_at = new Date();
@@ -99,14 +99,13 @@ User.findAllLimitOffset = function (limit, offset, result) {
   });
 };
 
-
-
 User.update = function (id, user, result) {
   dbConn.query(
-    "UPDATE users SET username=?,email=?, updated_at=? WHERE id = ?",
+    "UPDATE users SET username=?,email=?, birthday=?, updated_at=? WHERE id = ?",
     [
       user.username,
       user.email,
+      user.birthday,
       new Date(),
       id,
     ],
